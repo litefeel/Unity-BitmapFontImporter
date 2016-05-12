@@ -1,0 +1,21 @@
+# origin Travis CI form https://github.com/JonathanPorta/ci-build
+
+language: objective-c
+osx_image: xcode7.3
+rvm:
+- 2.1.2
+
+env:
+  matrix:
+    - UNITY_DOWNLOAD_URL=http://netstorage.unity3d.com/unity/fdbb5133b820/MacEditorInstaller/Unity-5.3.4f1.pkg
+    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/2524e04062b4/MacEditorInstaller/Unity-5.3.0f4.pkg
+    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/e7947df39b5c/MacEditorInstaller/Unity-5.2.0f3.pkg
+    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/ec70b008569d/MacEditorInstaller/Unity-5.1.0f3.pkg
+    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/5b98b70ebeb9/MacEditorInstaller/Unity-5.0.0f4.pkg
+
+before_install:
+- chmod -R +x ./Scripts
+install:
+- ./Scripts/install.sh
+script:
+- ./Scripts/build.sh
