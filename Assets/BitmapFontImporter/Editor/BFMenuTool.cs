@@ -6,7 +6,7 @@ namespace litefeel
 
     public class BFMenuTool
     {
-        [MenuItem("Assets/Bitmap Font/Regenerate Bitmap Font", true)]
+        [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font", true)]
         public static bool CheckGenerateFont()
         {
             TextAsset selected = Selection.activeObject as TextAsset;
@@ -14,7 +14,7 @@ namespace litefeel
             return BFImporter.IsFnt(AssetDatabase.GetAssetPath(selected));
         }
 
-        [MenuItem("Assets/Bitmap Font/Regenerate Bitmap Font")]
+        [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font")]
         public static void GenerateFont()
         {
             TextAsset selected = Selection.activeObject as TextAsset;
@@ -22,7 +22,7 @@ namespace litefeel
         }
 
 
-        [MenuItem("Assets/Bitmap Font/Regenerate All Bitmap Font")]
+        [MenuItem("Assets/Bitmap Font/Rebuild All Bitmap Font")]
         public static void GenerateAllFont()
         {
 

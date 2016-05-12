@@ -34,7 +34,7 @@ namespace litefeel
         {
             if (!IsFnt(fntPatn)) return;
 
-            TextAsset fnt = AssetDatabase.LoadAssetAtPath<TextAsset>(fntPatn);
+            TextAsset fnt = AssetDatabase.LoadMainAssetAtPath(fntPatn) as TextAsset;
             string text = fnt.text;
             FntParse parse = FntParse.GetFntParse(ref text);
             if (parse == null) return;

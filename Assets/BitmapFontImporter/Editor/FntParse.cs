@@ -201,33 +201,42 @@ namespace litefeel
 
         private CharacterInfo CreateCharInfo(int id, int x, int y, int w, int h, int xo, int yo, int xadvance)
         {
+            Rect uv = new Rect();
+            uv.x = (float)x / textureWidth;
+            uv.y = (float)y / textureHeight;
+            uv.width = (float)w / textureWidth;
+            uv.height = (float)h / textureHeight;
+            uv.y = 1f - uv.y - uv.height;
+
+            Rect vert = new Rect();
+            vert.x = xo;
+            vert.y = yo;
+            vert.width = w;
+            vert.height = h;
+            vert.y = -vert.y;
+            vert.height = -vert.height;
+
             CharacterInfo charInfo = new CharacterInfo();
-            Rect r = new Rect();
-            r.x = (float)x / textureWidth;
-            r.y = (float)y / textureHeight;
-            r.width = (float)w / textureWidth;
-            r.height = (float)h / textureHeight;
-            r.y = 1f - r.y - r.height;
-            charInfo.uvBottomLeft = new Vector2(r.xMin, r.yMin);
-            charInfo.uvBottomRight = new Vector2(r.xMax, r.yMin);
-            charInfo.uvTopLeft = new Vector2(r.xMin, r.yMax);
-            charInfo.uvTopRight = new Vector2(r.xMax, r.yMax);
-
-            r.x = xo;
-            r.y = yo;
-            r.width = w;
-            r.height = h;
-            r.y = -r.y;
-            r.height = -r.height;
-            charInfo.minX = (int)r.xMin;
-            charInfo.maxX = (int)r.xMax;
-            charInfo.minY = (int)r.yMax;
-            charInfo.maxY = (int)r.yMin;
-
-            charInfo.bearing = (int)r.x;
             charInfo.index = id;
-            charInfo.advance = xadvance;
 
+#if UNITY_5_3_OR_NEWER || UNITY_5_3 || UNITY_5_2
+            charInfo.uvBottomLeft = new Vector2(uv.xMin, uv.yMin);
+            charInfo.uvBottomRight = new Vector2(uv.xMax, uv.yMin);
+            charInfo.uvTopLeft = new Vector2(uv.xMin, uv.yMax);
+            charInfo.uvTopRight = new Vector2(uv.xMax, uv.yMax);
+
+            charInfo.minX = (int)vert.xMin;
+            charInfo.maxX = (int)vert.xMax;
+            charInfo.minY = (int)vert.yMax;
+            charInfo.maxY = (int)vert.yMin;
+
+            charInfo.bearing = (int)vert.x;
+            charInfo.advance = xadvance;
+#else
+            charInfo.uv = uv;
+            charInfo.vert = vert;
+            charInfo.width = xadvance;
+#endif
             return charInfo;
         }
     }
