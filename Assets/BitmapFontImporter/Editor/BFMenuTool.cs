@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 namespace litefeel
 {
@@ -7,7 +8,7 @@ namespace litefeel
     public class BFMenuTool
     {
         [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font", true)]
-        public static bool CheckGenerateFont()
+        public static bool CheckRebuildFont()
         {
             TextAsset selected = Selection.activeObject as TextAsset;
             if (selected == null) return false;
@@ -15,7 +16,7 @@ namespace litefeel
         }
 
         [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font")]
-        public static void GenerateFont()
+        public static void RebuildFont()
         {
             TextAsset selected = Selection.activeObject as TextAsset;
             BFImporter.DoImportBitmapFont(AssetDatabase.GetAssetPath(selected));
@@ -23,9 +24,15 @@ namespace litefeel
 
 
         [MenuItem("Assets/Bitmap Font/Rebuild All Bitmap Font")]
-        public static void GenerateAllFont()
+        public static void RebuildAllFont()
         {
-
+            string dataPath = Application.dataPath;
+            int startPos = dataPath.Length - "Assets".Length;
+            string[] files = Directory.GetFiles(Application.dataPath, "*.fnt", SearchOption.AllDirectories);
+            for (int i = 0; i < files.Length; i++)
+            {
+                BFImporter.DoImportBitmapFont(files[i].Substring(startPos));
+            }
         }
     }
 
