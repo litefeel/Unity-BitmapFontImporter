@@ -5,7 +5,7 @@ using System.IO;
 
 namespace litefeel
 {
-    class BFImporter : AssetPostprocessor
+    public class BFImporter : AssetPostprocessor
     {
         static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
@@ -14,15 +14,17 @@ namespace litefeel
                 //Debug.Log("Reimported Asset: " + str);
                 DoImportBitmapFont(str);
             }
-            //         foreach (string str in deletedAssets)
-            //         {
-            //             Debug.Log("Deleted Asset: " + str);
-            //         }
+            foreach (string str in deletedAssets)
+            {
+                //Debug.Log("Deleted Asset: " + str);
+                DelBitmapFont(str);
+            }
 
-            //         for (var i = 0; i < movedAssets.Length; i++)
-            //         {
-            //             Debug.Log("Moved Asset: " + movedAssets[i] + " from: " + movedFromAssetPaths[i]);
-            //         }
+            for (var i = 0; i < movedAssets.Length; i++)
+            {
+                //Debug.Log("Moved Asset: " + movedAssets[i] + " from: " + movedFromAssetPaths[i]);
+                MoveBitmapFont(movedFromAssetPaths[i], movedAssets[i]);
+            }
         }
 
         public static bool IsFnt(string path)
@@ -91,6 +93,24 @@ namespace litefeel
             }*/
 
             AssetDatabase.SaveAssets();
+        }
+
+
+        private static void DelBitmapFont(string fntPath)
+        {
+            if (!IsFnt(fntPath)) return;
+
+            string fontPath = fntPath.Substring(0, fntPath.Length - 4) + ".fontsettings";
+            AssetDatabase.DeleteAsset(fontPath);
+        }
+
+        private static void MoveBitmapFont(string oldFntPath, string nowFntPath)
+        {
+            if (!IsFnt(nowFntPath)) return;
+
+            string oldFontPath = oldFntPath.Substring(0, oldFntPath.Length - 4) + ".fontsettings";
+            string nowFontPath = nowFntPath.Substring(0, nowFntPath.Length - 4) + ".fontsettings";
+            AssetDatabase.MoveAsset(oldFontPath, nowFontPath);
         }
     }
 
