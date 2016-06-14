@@ -191,8 +191,13 @@ namespace litefeel
             {
                 string part = parts[i + 1];
                 int pos = part.IndexOf('=');
-                keys[i] = part.Substring(0, pos);
-                values[i] = part.Substring(pos + 1);
+                // char id=32 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=48 page=0 chnl=0 letter=" "
+                // For this line, the last element of parts have not '='
+                if (pos >= 0)
+                {
+                    keys[i] = part.Substring(0, pos);
+                    values[i] = part.Substring(pos + 1);
+                }
             }
             return true;
         }
