@@ -5,6 +5,13 @@ using System.Collections.Generic;
 
 namespace litefeel
 {
+    public struct Kerning
+    {
+        public int first;
+        public int second;
+        public int amount;
+    }
+
     public class FntParse
     {
         public int textureWidth;
@@ -17,6 +24,7 @@ namespace litefeel
         public int lineBaseHeight;
 
         public CharacterInfo[] charInfos { get; private set; }
+        public Kerning[] kernings { get; private set; }
 
         public static FntParse GetFntParse(ref string text)
         {
@@ -44,6 +52,7 @@ namespace litefeel
             XmlNode common = xml.GetElementsByTagName("common")[0];
             XmlNode page = xml.GetElementsByTagName("pages")[0].FirstChild;
             XmlNodeList chars = xml.GetElementsByTagName("chars")[0].ChildNodes;
+            XmlNodeList kerns = xml.GetElementsByTagName("kernings")[0].ChildNodes;
 
             fontName = info.Attributes.GetNamedItem("face").InnerText;
             fontSize = ToInt(info, "size");
@@ -68,6 +77,16 @@ namespace litefeel
                     ToInt(charNode, "yoffset"),
                     ToInt(charNode, "xadvance"));
             }
+
+            kernings = new Kerning[kerns.Count];
+            for (int i = 0; i < kerns.Count; i++)
+            {
+                XmlNode kerningNode = kerns[i];
+                kernings[i] = new Kerning();
+                kernings[i].first = ToInt(kerningNode, "first");
+                kernings[i].second = ToInt(kerningNode, "second");
+                kernings[i].amount = ToInt(kerningNode, "amount");
+            }
         }
 
 
@@ -87,12 +106,32 @@ namespace litefeel
             // don't use count of chars, count is incorrect if has space 
             //ReadTextCharCount(ref lines[3]);
             List<CharacterInfo> list = new List<CharacterInfo>();
-            for (int i = 4, l = lines.Length; i < l; i++)
+            int i = 4;
+            int l = lines.Length;
+            for (i = 4; i < l; i++)
             {
                 if (!ReadTextChar(i - 4, ref lines[i], ref list))
                     break;
             }
             charInfos = list.ToArray();
+
+            // skip empty line
+            for (; i <l; i++)
+            {
+                if (lines[i].Length > 0)
+                    break;
+            }
+            int count = 0;
+            if (ReadTextCount(ref lines[i++], out count))
+            {
+                int start = i;
+                kernings = new Kerning[count];
+                for (; i < l; i++)
+                {
+                    if (!ReadTextKerning(i - start, ref lines[i], ref list))
+                        break;
+                }
+            };
         }
 
         private void ReadTextInfo(ref string line)
@@ -141,22 +180,24 @@ namespace litefeel
             }
         }
 
-        private void ReadTextCharCount(ref string line)
+        private bool ReadTextCount(ref string line, out int count)
         {
             string[] keys;
             string[] values;
             SplitParts(line, out keys, out values);
-            int count = 0;
+            count = 0;
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 switch (keys[i])
                 {
-                    case "count": count = int.Parse(values[i]); break;
+                    case "count":
+                        count = int.Parse(values[i]);
+                        return true;
                 }
             }
-            charInfos = new CharacterInfo[count];
+            return false;
         }
-
+        
         private bool ReadTextChar(int idx, ref string line, ref List<CharacterInfo> list)
         {
             if (!line.StartsWith("char")) return false;
@@ -179,6 +220,26 @@ namespace litefeel
                 }
             }
             list.Add(CreateCharInfo(id, x, y, w, h, xo, yo, xadvance));
+            return true;
+        }
+
+        private bool ReadTextKerning(int idx, ref string line, ref List<CharacterInfo> list)
+        {
+            if (!line.StartsWith("kerning")) return false;
+            string[] keys;
+            string[] values;
+            SplitParts(line, out keys, out values);
+            Kerning kerning = new Kerning();
+            for (int i = keys.Length - 1; i >= 0; i--)
+            {
+                switch (keys[i])
+                {
+                    case "first" : kerning.first = int.Parse(values[i]); break;
+                    case "second": kerning.second = int.Parse(values[i]); break;
+                    case "amount": kerning.amount = int.Parse(values[i]); break;
+                }
+            }
+            kernings[idx] = kerning;
             return true;
         }
 
