@@ -58,7 +58,7 @@ namespace litefeel
 
             SerializedObject so = new SerializedObject(font);
             so.FindProperty("m_FontSize").floatValue = parse.fontSize;
-            so.FindProperty("m_LineSpacing").floatValue = parse.lineBaseHeight;
+            so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
             so.ApplyModifiedProperties();
 
             Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
