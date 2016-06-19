@@ -2,6 +2,7 @@
 using UnityEditor;
 using System;
 using System.IO;
+using System.Text;
 
 namespace litefeel
 {
@@ -55,11 +56,19 @@ namespace litefeel
                 font.material.name = "Font Material";
                 AssetDatabase.AddObjectToAsset(font.material, font);
             }
-
+            
             SerializedObject so = new SerializedObject(font);
+            so.Update();
             so.FindProperty("m_FontSize").floatValue = parse.fontSize;
             so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
+            SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
+            Debug.Log("arraySize " + kerningsProp.arraySize);
+            // Clear kernings info, reset kernings on end.
+            kerningsProp.ClearArray();
+
             so.ApplyModifiedProperties();
+            so.SetIsDifferentCacheDirty();
+
 
             Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
             if (texture == null)
@@ -77,22 +86,35 @@ namespace litefeel
             font.material.mainTexture.name = "Font Texture";
             
             font.characterInfo = parse.charInfos;
-
-            /*XmlNode kernings = xml.GetNode("kernings");
-            int kerningsCount = kernings.GetInt("count");
-            if (kerningsCount > 0)
-            {
-                SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
-                for (int i = 0; i < kerningsCount; i++)
-                {
-                    kerningsProp.InsertArrayElementAtIndex(i);
-                    XmlNode kerning = kernings.ChildNodes[i];
-                    SerializedProperty kern = kerningsProp.GetArrayElementAtIndex(i);
-                    kern.FindPropertyRelative("second").floatValue = kerning.GetFloat("amount");
-                }
-            }*/
-
+            
             AssetDatabase.SaveAssets();
+
+            // reset kernings by modify *.fontsettings file.
+            string kerningValues = GetKerningsStr(parse.kernings);
+            if (kerningValues != null)
+            {
+                string fontText = File.ReadAllText(fontPath);
+                fontText = fontText.Replace("m_KerningValues: []", kerningValues);
+                File.WriteAllText(fontPath, fontText);
+                //AssetDatabase.ImportAsset(fontText, ImportAssetOptions.ForceUpdate);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            }
+            
+        }
+
+        private static string GetKerningsStr(Kerning[] kernings)
+        {
+            if (kernings == null || kernings.Length == 0)
+                return null;
+
+            const string format = "  - first:\n      {0}: {1}\n    second: {2}\n";
+            StringBuilder builder = new StringBuilder("m_KerningValues:\n", kernings.Length * 20);
+            for (int i = 0; i < kernings.Length; i++)
+            {
+                builder.AppendFormat(format, kernings[i].first, kernings[i].second, kernings[i].amount);
+            }
+            builder.Remove(builder.Length - 1, 1);
+            return builder.ToString();
         }
 
 
