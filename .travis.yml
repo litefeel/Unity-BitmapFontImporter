@@ -7,11 +7,12 @@ rvm:
 
 env:
   matrix:
-    - UNITY_DOWNLOAD_URL=http://netstorage.unity3d.com/unity/fdbb5133b820/MacEditorInstaller/Unity-5.3.4f1.pkg
-    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/2524e04062b4/MacEditorInstaller/Unity-5.3.0f4.pkg
-    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/e7947df39b5c/MacEditorInstaller/Unity-5.2.0f3.pkg
-    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/ec70b008569d/MacEditorInstaller/Unity-5.1.0f3.pkg
-    - UNITY_DOWNLOAD_URL=http://download.unity3d.com/download_unity/5b98b70ebeb9/MacEditorInstaller/Unity-5.0.0f4.pkg
+    - UNITY_VERSION=beta
+    - UNITY_VERSION=last
+    - UNITY_VERSION=5.3
+    - UNITY_VERSION=5.2
+    - UNITY_VERSION=5.1
+    - UNITY_VERSION=5.0
 
 before_install:
 - chmod -R +x ./Scripts
