@@ -62,7 +62,7 @@ namespace litefeel
             so.FindProperty("m_FontSize").floatValue = parse.fontSize;
             so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
             SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
-            Debug.Log("arraySize " + kerningsProp.arraySize);
+            // Debug.Log("arraySize " + kerningsProp.arraySize);
             // Clear kernings info, reset kernings on end.
             kerningsProp.ClearArray();
 
