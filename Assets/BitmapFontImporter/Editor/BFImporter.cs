@@ -61,11 +61,7 @@ namespace litefeel
             so.Update();
             so.FindProperty("m_FontSize").floatValue = parse.fontSize;
             so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
-            SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
-            // Debug.Log("arraySize " + kerningsProp.arraySize);
-            // Clear kernings info, reset kernings on end.
-            kerningsProp.ClearArray();
-
+            UpdateKernings(so, parse.kernings);
             so.ApplyModifiedProperties();
             so.SetIsDifferentCacheDirty();
 
@@ -87,37 +83,43 @@ namespace litefeel
             
             font.characterInfo = parse.charInfos;
             
-            AssetDatabase.SaveAssets();
-
-            // reset kernings by modify *.fontsettings file.
-            string kerningValues = GetKerningsStr(parse.kernings);
-            if (kerningValues != null)
-            {
-                string fontText = File.ReadAllText(fontPath);
-                fontText = fontText.Replace("m_KerningValues: []", kerningValues);
-                File.WriteAllText(fontPath, fontText);
-                //AssetDatabase.ImportAsset(fontText, ImportAssetOptions.ForceUpdate);
-                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-            }
-            
+            AssetDatabase.SaveAssets(); 
         }
 
-        private static string GetKerningsStr(Kerning[] kernings)
+        private static void UpdateKernings(SerializedObject so, Kerning[] kernings)
         {
-            if (kernings == null || kernings.Length == 0)
-                return null;
+            int len = kernings != null ? kernings.Length : 0;
+            SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
+            so.Update();
 
-            const string format = "  - first:\n      {0}: {1}\n    second: {2}\n";
-            StringBuilder builder = new StringBuilder("m_KerningValues:\n", kernings.Length * 20);
-            for (int i = 0; i < kernings.Length; i++)
+            if (len == 0)
             {
-                builder.AppendFormat(format, kernings[i].first, kernings[i].second, kernings[i].amount);
+                kerningsProp.ClearArray();
+                return;
             }
-            builder.Remove(builder.Length - 1, 1);
-            return builder.ToString();
+
+            int propLen = kerningsProp.arraySize;
+            for (int i = 0; i < len; i++)
+            {
+                if (propLen <= i)
+                {
+                    kerningsProp.InsertArrayElementAtIndex(i);
+                }
+
+                SerializedProperty kerningProp = kerningsProp.GetArrayElementAtIndex(i);
+                kerningProp.FindPropertyRelative("second").floatValue = kernings[i].amount;
+                SerializedProperty pairProp = kerningProp.FindPropertyRelative("first");
+                pairProp.Next(true);
+                pairProp.intValue = kernings[i].first;
+                pairProp.Next(false);
+                pairProp.intValue = kernings[i].second;
+            }
+            for (int i = propLen - 1; i >= len; i--)
+            {
+                kerningsProp.DeleteArrayElementAtIndex(i);
+            }
         }
-
-
+        
         private static void DelBitmapFont(string fntPath)
         {
             if (!IsFnt(fntPath)) return;
