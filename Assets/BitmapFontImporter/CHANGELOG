@@ -1,0 +1,9 @@
+v1.2   June 20 2016
+[NEW]     Support kerning
+[FIX]     Fix incorrect line height
+
+v1.1   June 14 2016
+[NEW]     Fix can not parse .fnt file if it has space letter of char
+
+V1.0   May 19  2016
+[NEW]     The first public version
