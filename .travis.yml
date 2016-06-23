@@ -17,6 +17,6 @@ env:
 before_install:
 - chmod -R +x ./Scripts
 install:
-- ./Scripts/install.sh
+- travis_wait 50 ./Scripts/install.sh
 script:
 - ./Scripts/build.sh
