@@ -1,3 +1,6 @@
+v1.3   June 28 2016
+[FIX]     Fix error when without kernings in fnt file
+
 v1.2   June 20 2016
 [NEW]     Support kerning
 [FIX]     Fix incorrect line height

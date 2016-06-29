@@ -26,6 +26,9 @@ Please see [here][howtouse]
 - Create issues by [issues][issues] page
 - Send email to me: <litefeel@gmail.com>
 
+**ChangeLog**
+<https://github.com/lite3/Unity-BitmapFontImporter/blob/master/Assets/BitmapFontImporter/CHANGELOG>
+
 
 
 
