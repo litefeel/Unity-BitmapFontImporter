@@ -52,7 +52,7 @@ namespace litefeel
             XmlNode common = xml.GetElementsByTagName("common")[0];
             XmlNode page = xml.GetElementsByTagName("pages")[0].FirstChild;
             XmlNodeList chars = xml.GetElementsByTagName("chars")[0].ChildNodes;
-            XmlNodeList kerns = xml.GetElementsByTagName("kernings")[0].ChildNodes;
+
 
             fontName = info.Attributes.GetNamedItem("face").InnerText;
             fontSize = ToInt(info, "size");
@@ -78,14 +78,20 @@ namespace litefeel
                     ToInt(charNode, "xadvance"));
             }
 
-            kernings = new Kerning[kerns.Count];
-            for (int i = 0; i < kerns.Count; i++)
+            // kernings
+            XmlNode kerningsNode = xml.GetElementsByTagName("kernings")[0];
+            if (kerningsNode != null && kerningsNode.HasChildNodes)
             {
-                XmlNode kerningNode = kerns[i];
-                kernings[i] = new Kerning();
-                kernings[i].first = ToInt(kerningNode, "first");
-                kernings[i].second = ToInt(kerningNode, "second");
-                kernings[i].amount = ToInt(kerningNode, "amount");
+                XmlNodeList kerns = kerningsNode.ChildNodes;
+                kernings = new Kerning[kerns.Count];
+                for (int i = 0; i < kerns.Count; i++)
+                {
+                    XmlNode kerningNode = kerns[i];
+                    kernings[i] = new Kerning();
+                    kernings[i].first = ToInt(kerningNode, "first");
+                    kernings[i].second = ToInt(kerningNode, "second");
+                    kernings[i].amount = ToInt(kerningNode, "amount");
+                }
             }
         }
 
@@ -121,17 +127,22 @@ namespace litefeel
                 if (lines[i].Length > 0)
                     break;
             }
-            int count = 0;
-            if (ReadTextCount(ref lines[i++], out count))
+
+            // kernings
+            if (i < l)
             {
-                int start = i;
-                kernings = new Kerning[count];
-                for (; i < l; i++)
+                int count = 0;
+                if (ReadTextCount(ref lines[i++], out count))
                 {
-                    if (!ReadTextKerning(i - start, ref lines[i], ref list))
-                        break;
-                }
-            };
+                    int start = i;
+                    kernings = new Kerning[count];
+                    for (; i < l; i++)
+                    {
+                        if (!ReadTextKerning(i - start, ref lines[i], ref list))
+                            break;
+                    }
+                };
+            }
         }
 
         private void ReadTextInfo(ref string line)
