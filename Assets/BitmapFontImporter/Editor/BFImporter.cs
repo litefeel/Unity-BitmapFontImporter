@@ -90,7 +90,7 @@ namespace litefeel
         {
             int len = kernings != null ? kernings.Length : 0;
             SerializedProperty kerningsProp = so.FindProperty("m_KerningValues");
-            so.Update();
+            //so.Update();
 
             if (len == 0)
             {
