@@ -18,7 +18,8 @@ echo "Downloading from $url: "
 if [ -z $dmg ]; then
     curl -o Unity.dmg "$url"
     sudo hdiutil attach Unity.dmg
-    pkgname="/Volumes/Unity/Unity.pkg"
+    ls /Volumes/Unity\ Download\ Assistant
+    pkgname="/Volumes/Unity Download Assistant/Unity.pkg"
 else
     curl -o Unity.pkg "$url"
 fi
