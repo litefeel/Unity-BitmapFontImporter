@@ -11,7 +11,7 @@ def getRealBetaUrlTuples(pageUrl):
     data = f.read()
     # <a href="http://beta.unity3d.com/download/0df597686c75/Windows64EditorInstaller/UnitySetup64-5.4.0b19.exe">Unity Editor 64-bit &#40;Win&#41;</a>
     # <a href="http://beta.unity3d.com/download/0df597686c75/MacEditorInstaller/Unity-5.4.0b19.pkg">Unity Editor &#40;Mac&#41;</a>
-    urlTuples = re.findall(r'<a href="([^"]*?EditorInstaller/Unity[^"]*?-([^"]*?)\.(pkg|dmg|exe))">Unity Editor.*?</a>', data)
+    urlTuples = re.findall(r'<a href="(https?://[^"]*?(UnityDownloadAssistant|EditorInstaller/Unity.*?)-([^"]*?)\.(pkg|dmg|exe))">Unity Editor.*?</a>', data)
     return urlTuples
 
 def getBetaUrlTuples():
@@ -67,7 +67,7 @@ def filterByVersion(urlTuples, version):
     isOldest = version.endswith('-')
     if isNewst or isOldest:
         version = version[0:-1]
-    urlTuples = filter(lambda urlTuple: urlTuple[1].find(version) >= 0, urlTuples)
+    urlTuples = filter(lambda urlTuple: urlTuple[2].find(version) >= 0, urlTuples)
     if isNewst:
         del urlTuples[1:]
     elif isOldest:
