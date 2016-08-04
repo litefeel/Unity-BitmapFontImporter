@@ -11,7 +11,7 @@ def getRealBetaUrlTuples(pageUrl):
     data = f.read()
     # <a href="http://beta.unity3d.com/download/0df597686c75/Windows64EditorInstaller/UnitySetup64-5.4.0b19.exe">Unity Editor 64-bit &#40;Win&#41;</a>
     # <a href="http://beta.unity3d.com/download/0df597686c75/MacEditorInstaller/Unity-5.4.0b19.pkg">Unity Editor &#40;Mac&#41;</a>
-    urlTuples = re.findall(r'<a href="([^"]*?EditorInstaller/Unity[^"]*?-([^"]*?)\.(pkg|exe))">Unity Editor.*?</a>', data)
+    urlTuples = re.findall(r'<a href="([^"]*?EditorInstaller/Unity[^"]*?-([^"]*?)\.(pkg|dmg|exe))">Unity Editor.*?</a>', data)
     return urlTuples
 
 def getBetaUrlTuples():
@@ -32,8 +32,9 @@ def getUrlTuples():
     data = f.read()
     # <a href="http://netstorage.unity3d.com/unity/960ebf59018a/Windows64EditorInstaller/UnitySetup64-5.3.5f1.exe">Unity Editor 64-bit</a>
     # <a href="http://download.unity3d.com/download_unity/0b02744d4013/MacEditorInstaller/Unity-5.0.2f1.pkg">Unity Editor</a>
+    # <a href="http://download.unity3d.com/download_unity/a6d8d714de6f/UnityDownloadAssistant-5.4.0f3.dmg">Unity编辑器</a>
     # urlTuples = re.findall(r'<a href="(https?://[^"]*?/(Mac|Windows32|Windows64)EditorInstaller/Unity-(5\..*?)\.(pkg|exe))">Unity Editor</a>', data)
-    urlTuples = re.findall(r'<a href="(https?://[^"]*?EditorInstaller/Unity.*?-(.*?)\.(pkg|exe))">Unity Editor.*?</a>', data)
+    urlTuples = re.findall(r'<a href="(https?://[^"]*?(UnityDownloadAssistant|EditorInstaller/Unity.*?)-(.*?)\.(pkg|dmg|exe))">Unity Editor.*?</a>', data)
     return urlTuples
 
 osmap = {
@@ -47,7 +48,7 @@ osmap = {
 def splitByOS(urlTuples):
     macs, win64s, win32s = [], [], []
     for urlTuple in urlTuples:
-        if urlTuple[0].find('Mac') >= 0:
+        if urlTuple[0].find('Mac') >= 0 or urlTuple[0].find('UnityDownloadAssistant') >= 0:
             macs.append(urlTuple)
         elif urlTuple[0].find('Windows64') >= 0:
             win64s.append(urlTuple)
