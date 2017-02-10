@@ -2,6 +2,7 @@
 using System.Xml;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace litefeel
 {
@@ -103,8 +104,10 @@ namespace litefeel
         #endregion
 
         #region text
+        private Regex pattern;
         public void DoTextParse(ref string content)
         {
+            pattern = new Regex(@"\S+="".+?""|\S+");
             string[] lines = content.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             ReadTextInfo(ref lines[0]);
             ReadTextCommon(ref lines[1]);
@@ -154,7 +157,7 @@ namespace litefeel
             {
                 switch (keys[i])
                 {
-                    case "face": fontName = values[i].Trim('"'); break;
+                    case "face": fontName = values[i]; break;
                     case "size": fontSize = int.Parse(values[i]); break;
                 }
             }
@@ -186,7 +189,7 @@ namespace litefeel
             {
                 switch (keys[i])
                 {
-                    case "file": textureName = values[i].Trim('"'); break;
+                    case "file": textureName = values[i]; break;
                 }
             }
         }
@@ -256,20 +259,16 @@ namespace litefeel
 
         private bool SplitParts(string line, out string[] keys, out string[] values)
         {
-            string[] parts = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-            keys = new string[parts.Length - 1];
-            values = new string[parts.Length - 1];
-            for (int i = parts.Length - 2; i >= 0; i--)
+            MatchCollection parts = pattern.Matches(line);
+            int count = parts.Count;
+            keys = new string[count - 1];
+            values = new string[count - 1];
+            for (int i = count - 2; i >= 0; i--)
             {
-                string part = parts[i + 1];
+                string part = parts[i + 1].Value;
                 int pos = part.IndexOf('=');
-                // char id=32 x=0 y=0 width=0 height=0 xoffset=0 yoffset=0 xadvance=48 page=0 chnl=0 letter=" "
-                // For this line, the last element of parts have not '='
-                if (pos >= 0)
-                {
-                    keys[i] = part.Substring(0, pos);
-                    values[i] = part.Substring(pos + 1);
-                }
+                keys[i] = part.Substring(0, pos);
+                values[i] = part.Substring(pos + 1).Trim('"');
             }
             return true;
         }
