@@ -286,7 +286,7 @@ namespace litefeel
 
             Rect vert = new Rect();
             vert.x = xo;
-            vert.y = yo;
+            vert.y = yo - lineBaseHeight;
             vert.width = w;
             vert.height = h;
             vert.y = -vert.y;

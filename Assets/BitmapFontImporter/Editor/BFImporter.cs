@@ -59,8 +59,10 @@ namespace litefeel
             
             SerializedObject so = new SerializedObject(font);
             so.Update();
-            so.FindProperty("m_FontSize").floatValue = parse.fontSize;
+            so.FindProperty("m_FontSize").floatValue = Mathf.Abs(parse.fontSize);
             so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
+            so.FindProperty("m_Descent").floatValue = parse.lineBaseHeight - parse.lineHeight;
+            so.FindProperty("m_Ascent").floatValue =  parse.lineBaseHeight;
             UpdateKernings(so, parse.kernings);
             so.ApplyModifiedProperties();
             so.SetIsDifferentCacheDirty();
