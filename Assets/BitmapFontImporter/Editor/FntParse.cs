@@ -293,7 +293,7 @@ namespace litefeel
             vert.x = xo;
 #if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
             // unity 5.0 can not support baseline for 
-            vert.y = 0;
+            vert.y = yo;
 #else
             vert.y = yo - lineBaseHeight;
 #endif
