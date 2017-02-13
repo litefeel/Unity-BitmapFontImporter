@@ -309,9 +309,11 @@ namespace litefeel
             charInfo.bearing = (int)vert.x;
             charInfo.advance = xadvance;
 #else
+#pragma warning disable 618
             charInfo.uv = uv;
             charInfo.vert = vert;
             charInfo.width = xadvance;
+#pragma warning restore 618
 #endif
             return charInfo;
         }
