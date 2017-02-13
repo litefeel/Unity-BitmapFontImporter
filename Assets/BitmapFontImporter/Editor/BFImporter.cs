@@ -47,27 +47,6 @@ namespace litefeel
             string fontPath = string.Format("{0}/{1}.fontsettings", rootPath, fntName);
             string texPath = string.Format("{0}/{1}", rootPath, parse.textureName);
 
-            Font font = AssetDatabase.LoadMainAssetAtPath(fontPath) as Font;
-            if (font == null)
-            {
-                font = new Font();
-                AssetDatabase.CreateAsset(font, fontPath);
-                font.material = new Material(Shader.Find("UI/Default"));
-                font.material.name = "Font Material";
-                AssetDatabase.AddObjectToAsset(font.material, font);
-            }
-            
-            SerializedObject so = new SerializedObject(font);
-            so.Update();
-            so.FindProperty("m_FontSize").floatValue = Mathf.Abs(parse.fontSize);
-            so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
-            so.FindProperty("m_Descent").floatValue = parse.lineBaseHeight - parse.lineHeight;
-            so.FindProperty("m_Ascent").floatValue =  parse.lineBaseHeight;
-            UpdateKernings(so, parse.kernings);
-            so.ApplyModifiedProperties();
-            so.SetIsDifferentCacheDirty();
-
-
             Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
             if (texture == null)
             {
@@ -80,12 +59,41 @@ namespace litefeel
             texImporter.mipmapEnabled = false;
             texImporter.SaveAndReimport();
 
-            font.material.mainTexture = texture;
-            font.material.mainTexture.name = "Font Texture";
-            
+
+            Font font = AssetDatabase.LoadMainAssetAtPath(fontPath) as Font;
+            if (font == null)
+            {
+                font = new Font();
+                AssetDatabase.CreateAsset(font, fontPath);
+                AssetDatabase.WriteImportSettingsIfDirty(fontPath);
+                AssetDatabase.ImportAsset(fontPath);
+            }
+            Material material = AssetDatabase.LoadAssetAtPath(fontPath, typeof(Material)) as Material;
+            if (material == null)
+            {
+                material = new Material(Shader.Find("UI/Default"));
+                material.name = "Font Material";
+                AssetDatabase.AddObjectToAsset(material, fontPath);
+                // unity 5.4+ cannot refresh it immediately, must import it
+                AssetDatabase.ImportAsset(fontPath);
+            }
+            font.material = material;
+            material.mainTexture = texture;
             font.characterInfo = parse.charInfos;
+
+            SerializedObject so = new SerializedObject(font);
+            so.Update();
+            so.FindProperty("m_FontSize").floatValue = Mathf.Abs(parse.fontSize);
+            so.FindProperty("m_LineSpacing").floatValue = parse.lineHeight;
+            so.FindProperty("m_Ascent").floatValue = parse.lineBaseHeight;
+            SerializedProperty prop = so.FindProperty("m_Descent");
+            if (prop != null)
+                prop.floatValue = parse.lineBaseHeight - parse.lineHeight;
+            UpdateKernings(so, parse.kernings);
+            so.ApplyModifiedProperties();
+            so.SetIsDifferentCacheDirty();
             
-            AssetDatabase.SaveAssets(); 
+            AssetDatabase.SaveAssets();
 
 #if UNITY_5_5_OR_NEWER
             // unity 5.5 can not load custom font
