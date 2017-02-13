@@ -286,7 +286,12 @@ namespace litefeel
 
             Rect vert = new Rect();
             vert.x = xo;
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2
+            // unity 5.0 can not support baseline for 
+            vert.y = 0;
+#else
             vert.y = yo - lineBaseHeight;
+#endif
             vert.width = w;
             vert.height = h;
             vert.y = -vert.y;
