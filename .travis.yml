@@ -12,6 +12,10 @@ env:
     - UNITY_VERSION=5.1
     - UNITY_VERSION=5.0
 
+matrix:
+  allow_failures:
+    - env: UNITY_VERSION=beta
+
 before_install:
 - chmod -R +x ./Scripts
 install:
