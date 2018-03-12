@@ -31,7 +31,7 @@ Please see [here][howtouse]
 
 **ChangeLog**
 
-<https://github.com/lite3/Unity-BitmapFontImporter/blob/master/Assets/BitmapFontImporter/CHANGELOG>
+<https://github.com/litefeel/Unity-BitmapFontImporter/blob/master/Assets/BitmapFontImporter/CHANGELOG>
 
 
 
@@ -41,6 +41,6 @@ Please see [here][howtouse]
 [3]: https://71squared.com/glyphdesigner (Glyph Designer 2)
 [4]: http://renderhjs.net/shoebox/ (ShoeBox)
 [5]: http://www.angelcode.com/products/bmfont/ (Bitmap Font Generator)
-[bfi]: https://github.com/lite3/Unity-BitmapFontImporter (BitmapFontImporter)
-[issues]: https://github.com/lite3/Unity-BitmapFontImporter/issues (BitmapFontImporter issues)
-[howtouse]: https://github.com/lite3/Unity-BitmapFontImporter/wiki/How-to-use (BitmapFontImporter How to use)
+[bfi]: https://github.com/litefeel/Unity-BitmapFontImporter (BitmapFontImporter)
+[issues]: https://github.com/litefeel/Unity-BitmapFontImporter/issues (BitmapFontImporter issues)
+[howtouse]: https://github.com/litefeel/Unity-BitmapFontImporter/wiki/How-to-use (BitmapFontImporter How to use)
