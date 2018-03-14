@@ -10,6 +10,8 @@ namespace litefeel
         [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font", true)]
         public static bool CheckRebuildFont()
         {
+            if (EditorApplication.isPlaying) return false;
+
             TextAsset selected = Selection.activeObject as TextAsset;
             if (selected == null) return false;
             return BFImporter.IsFnt(AssetDatabase.GetAssetPath(selected));
@@ -22,6 +24,11 @@ namespace litefeel
             BFImporter.DoImportBitmapFont(AssetDatabase.GetAssetPath(selected));
         }
 
+        [MenuItem("Assets/Bitmap Font/Rebuild All Bitmap Font", true)]
+        public static bool CheckRebuildAllFont()
+        {
+            return !EditorApplication.isPlaying;
+        }
 
         [MenuItem("Assets/Bitmap Font/Rebuild All Bitmap Font")]
         public static void RebuildAllFont()
