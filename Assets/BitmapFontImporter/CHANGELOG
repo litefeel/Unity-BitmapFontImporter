@@ -1,3 +1,6 @@
+v2.1    Mar 15, 2018
+[NEW]     Disabled Rebuild on play mode
+
 v1.5    Feb 14, 2017
 [FIX]     Display nothing when import a font in unity 5.5+
 [FIX]     Create the font without material when import a font in unity 5.4
