@@ -45,21 +45,8 @@ namespace litefeel
             string fntName = Path.GetFileNameWithoutExtension(fntPatn);
             string rootPath = Path.GetDirectoryName(fntPatn);
             string fontPath = string.Format("{0}/{1}.fontsettings", rootPath, fntName);
-            string texPath = string.Format("{0}/{1}", rootPath, parse.textureName);
-
-            Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
-            if (texture == null)
-            {
-                Debug.LogErrorFormat(fnt, "{0}: not found '{1}'.", typeof(BFImporter), texPath);
-                return;
-            }
-
-            TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
-            texImporter.textureType = TextureImporterType.GUI;
-            texImporter.mipmapEnabled = false;
-            texImporter.SaveAndReimport();
-
-
+            Texture2D[] textures = DoImportTextures(parse, rootPath, fnt);
+            
             Font font = AssetDatabase.LoadMainAssetAtPath(fontPath) as Font;
             if (font == null)
             {
@@ -77,8 +64,15 @@ namespace litefeel
                 // unity 5.4+ cannot refresh it immediately, must import it
                 AssetDatabase.ImportAsset(fontPath);
             }
+            
             font.material = material;
-            material.mainTexture = texture;
+            material.shader = Shader.Find(textures.Length > 1 ? "BFI/Font" + textures.Length : "UI/Default");
+            material.mainTexture = textures[0];
+            material.SetTexture("_MainTex2", textures[1]);
+            for (int i = 1; i < textures.Length; i++)
+            {
+                material.SetTexture("_MainTex"+i, textures[i]);
+            }
             font.characterInfo = parse.charInfos;
 
             SerializedObject so = new SerializedObject(font);
@@ -99,6 +93,30 @@ namespace litefeel
             // unity 5.5 can not load custom font
             ReloadFont(fontPath);
 #endif
+        }
+
+        private static Texture2D[] DoImportTextures(FntParse parse, string rootPath, TextAsset fnt)
+        {
+            int len = parse.textureNames.Length;
+            Texture2D[] textures = new Texture2D[len];
+            for (int i = 0; i < len; i++)
+            {
+                string texPath = string.Format("{0}/{1}", rootPath, parse.textureNames[i]);
+
+                Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
+                if (texture == null)
+                {
+                    Debug.LogErrorFormat(fnt, "{0}: not found '{1}'.", typeof(BFImporter), texPath);
+                    return textures;
+                }
+
+                TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
+                texImporter.textureType = TextureImporterType.GUI;
+                texImporter.mipmapEnabled = false;
+                texImporter.SaveAndReimport();
+                textures[i] = texture;
+            }
+            return textures;
         }
 
         private static void UpdateKernings(SerializedObject so, Kerning[] kernings)

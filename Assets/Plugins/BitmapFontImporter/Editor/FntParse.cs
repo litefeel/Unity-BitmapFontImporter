@@ -17,7 +17,7 @@ namespace litefeel
     {
         public int textureWidth;
         public int textureHeight;
-        public string textureName;
+        public string[] textureNames;
 
         public string fontName;
         public int fontSize;
@@ -51,7 +51,7 @@ namespace litefeel
 
             XmlNode info = xml.GetElementsByTagName("info")[0];
             XmlNode common = xml.GetElementsByTagName("common")[0];
-            XmlNode page = xml.GetElementsByTagName("pages")[0].FirstChild;
+            XmlNodeList pages = xml.GetElementsByTagName("pages")[0].ChildNodes;
             XmlNodeList chars = xml.GetElementsByTagName("chars")[0].ChildNodes;
 
 
@@ -62,7 +62,15 @@ namespace litefeel
             lineBaseHeight = ToInt(common, "base");
             textureWidth = ToInt(common, "scaleW");
             textureHeight = ToInt(common, "scaleH");
-            textureName = page.Attributes.GetNamedItem("file").InnerText;
+            int pageNum = ToInt(common, "pages");
+            textureNames = new string[pageNum];
+
+            for (int i = 0; i < pageNum; i++)
+            {
+                XmlNode page = pages[i];
+                int pageId = ToInt(page, "id");
+                textureNames[pageId] = page.Attributes.GetNamedItem("file").InnerText;
+            }
 
             charInfos = new CharacterInfo[chars.Count];
             for (int i = 0; i < chars.Count; i++)
@@ -76,7 +84,8 @@ namespace litefeel
                     ToInt(charNode, "height"),
                     ToInt(charNode, "xoffset"),
                     ToInt(charNode, "yoffset"),
-                    ToInt(charNode, "xadvance"));
+                    ToInt(charNode, "xadvance"),
+                    ToInt(charNode, "page"));
             }
 
             // kernings
@@ -116,13 +125,18 @@ namespace litefeel
             string[] lines = content.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             ReadTextInfo(ref lines[0]);
             ReadTextCommon(ref lines[1]);
-            ReadTextPage(ref lines[2]);
+
+            for (int j = 0; j < textureNames.Length; j++)
+            {
+                ReadTextPage(ref lines[j + 2]);
+            }
+            
             // don't use count of chars, count is incorrect if has space 
             //ReadTextCharCount(ref lines[3]);
             List<CharacterInfo> list = new List<CharacterInfo>();
-            int i = 4;
+            int i = 2 + textureNames.Length;
             int l = lines.Length;
-            for (i = 4; i < l; i++)
+            for (; i < l; i++)
             {
                 if (!ReadTextChar(i - 4, ref lines[i], ref list))
                     break;
@@ -181,6 +195,7 @@ namespace litefeel
                     case "base": lineBaseHeight = int.Parse(values[i]); break;
                     case "scaleW": textureWidth = int.Parse(values[i]); break;
                     case "scaleH": textureHeight = int.Parse(values[i]); break;
+                    case "pages": textureNames = new string[int.Parse(values[i])];break;
                 }
             }
         }
@@ -190,13 +205,17 @@ namespace litefeel
             string[] keys;
             string[] values;
             SplitParts(line, out keys, out values);
+            string textureName = null;
+            int pageId = -1;
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 switch (keys[i])
                 {
                     case "file": textureName = values[i]; break;
+                    case "id": pageId = int.Parse(values[i]); break;
                 }
             }
+            textureNames[pageId] = textureName;
         }
 
         private bool ReadTextCount(ref string line, out int count)
@@ -280,10 +299,10 @@ namespace litefeel
 
         #endregion
 
-        private CharacterInfo CreateCharInfo(int id, int x, int y, int w, int h, int xo, int yo, int xadvance)
+        private CharacterInfo CreateCharInfo(int id, int x, int y, int w, int h, int xo, int yo, int xadvance, int page = 0)
         {
             Rect uv = new Rect();
-            uv.x = (float)x / textureWidth;
+            uv.x = (float)x / textureWidth + page;
             uv.y = (float)y / textureHeight;
             uv.width = (float)w / textureWidth;
             uv.height = (float)h / textureHeight;
