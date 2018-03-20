@@ -1,3 +1,7 @@
+v2.2    Mar 20, 2018
+[NEW]     Support Multi texture
+[CHANGE]  Move plugin to Plugins directory
+
 v2.1    Mar 15, 2018
 [NEW]     Disabled Rebuild on play mode
 
