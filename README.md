@@ -12,6 +12,7 @@ Thiks @Xylph, this origin code form [here](http://forum.unity3d.com/threads/unit
 - Free
 - Auto Import bitmap fonts
 - Support XML and Plain text format of .fnt
+- Support Multi texture
 - Reimport exists bitmap font
 - Source Code on [Github][bfi]
 - Tested with Unity 5.x
