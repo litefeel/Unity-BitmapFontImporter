@@ -68,7 +68,6 @@ namespace litefeel
             font.material = material;
             material.shader = Shader.Find(textures.Length > 1 ? "BFI/Font" + textures.Length : "UI/Default");
             material.mainTexture = textures[0];
-            material.SetTexture("_MainTex2", textures[1]);
             for (int i = 1; i < textures.Length; i++)
             {
                 material.SetTexture("_MainTex"+i, textures[i]);
