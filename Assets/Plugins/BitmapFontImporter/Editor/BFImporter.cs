@@ -100,7 +100,8 @@ namespace litefeel
             Texture2D[] textures = new Texture2D[len];
             for (int i = 0; i < len; i++)
             {
-                string texPath = string.Format("{0}/{1}", rootPath, parse.textureNames[i]);
+                string textureName = GetFileName(parse.textureNames[i]);
+                string texPath = string.Format("{0}/{1}", rootPath, textureName);
 
                 Texture2D texture = AssetDatabase.LoadMainAssetAtPath(texPath) as Texture2D;
                 if (texture == null)
@@ -116,6 +117,23 @@ namespace litefeel
                 textures[i] = texture;
             }
             return textures;
+        }
+
+        private static string GetFileName(string path)
+        {
+            string fileName = Path.GetFileName(path);
+            if (fileName == null)
+            {
+                return path;
+            }
+
+            int indexOfBackslash = fileName.IndexOf("\\", StringComparison.Ordinal);
+            if (indexOfBackslash != -1)
+            {
+                fileName = fileName.Substring(indexOfBackslash + 1);
+            }
+
+            return fileName;
         }
 
         private static void UpdateKernings(SerializedObject so, Kerning[] kernings)
