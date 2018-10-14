@@ -1,11 +1,10 @@
 ﻿using litefeel;
+using NUnit.Framework;
 using UnityEditor;
 
-public class MyTest {
-
-    // Use this for initialization
-
-    //[InitializeOnLoadMethod]
+public class MyTest
+{
+    [Test]
     public static void Test () {
         AssetDatabase.DeleteAsset("Assets/Plugins/BitmapFontImporter/Examples/Font1/font1.fontsettings");
         AssetDatabase.DeleteAsset("Assets/Plugins/BitmapFontImporter/Examples/Font2/font2.fontsettings");

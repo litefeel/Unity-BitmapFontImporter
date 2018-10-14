@@ -9,7 +9,7 @@ echo "Run test "
   -silent-crashes \
   -logFile $(pwd)/unity.log \
   -projectPath $(pwd) \
-  -executeMethod MyTest.Test \
+  -runEditorTests \
   -quit
 
 code=$?
