@@ -70,7 +70,7 @@ namespace litefeel
             material.mainTexture = textures[0];
             for (int i = 1; i < textures.Length; i++)
             {
-                material.SetTexture("_MainTex"+i, textures[i]);
+                material.SetTexture("_MainTex" + (i + 1), textures[i]);
             }
             font.characterInfo = parse.charInfos;
 
