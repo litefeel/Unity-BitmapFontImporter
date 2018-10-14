@@ -1,5 +1,6 @@
-v2.3    Oct 14, 2018
+v2.4    Oct 14, 2018
 [FIX]     Fix Incorrect texture path
+[FIX]     Fixed incorrect textue in FontMaterial when multi texure
 
 v2.2    Mar 20, 2018
 [NEW]     Support Multi texture
