@@ -108,7 +108,7 @@ namespace litefeel
                 if (texture == null)
                 {
                     Debug.LogErrorFormat(fnt, "{0}: not found '{1}'.", typeof(BFImporter), texPath);
-                    return textures;
+                    continue;
                 }
 
                 TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
