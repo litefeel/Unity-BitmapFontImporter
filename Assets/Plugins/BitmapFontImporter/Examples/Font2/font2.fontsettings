@@ -18,6 +18,22 @@ Font:
   m_ConvertCase: 0
   m_CharacterRects:
   - serializedVersion: 2
+    index: 0
+    uv:
+      serializedVersion: 2
+      x: 0
+      y: 1
+      width: 0
+      height: 0
+    vert:
+      serializedVersion: 2
+      x: 0
+      y: 53
+      width: 0
+      height: 0
+    advance: 0
+    flipped: 0
+  - serializedVersion: 2
     index: 97
     uv:
       serializedVersion: 2
@@ -1229,6 +1245,7 @@ Font:
   m_FontNames: []
   m_FallbackFonts: []
   m_FontRenderingMode: 0
+  m_UseLegacyBoundsCalculation: 0
 --- !u!21 &21859711591984836
 Material:
   serializedVersion: 6
@@ -1240,6 +1257,7 @@ Material:
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
