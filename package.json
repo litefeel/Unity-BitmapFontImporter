@@ -1,6 +1,6 @@
 {
     "name": "com.litefeel.bitmapfontimporter",
-    "displayName": "BitmapFont",
+    "displayName": "BitmapFontImporter",
     "version": "2.4.0",
     "unity": "2018.2",
     "description": "This package provides X, Y, and Z. \n\nTo find out more, click the \"View documentation\" link.",
