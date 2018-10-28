@@ -14,7 +14,8 @@ namespace litefeel
 
             TextAsset selected = Selection.activeObject as TextAsset;
             if (selected == null) return false;
-            return BFImporter.IsFnt(AssetDatabase.GetAssetPath(selected));
+            string path = AssetDatabase.GetAssetPath(selected);
+            return BFImporter.CanImportFnt(path) ;
         }
 
         [MenuItem("Assets/Bitmap Font/Rebuild Bitmap Font")]

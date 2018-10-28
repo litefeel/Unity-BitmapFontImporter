@@ -27,15 +27,16 @@ namespace litefeel
                 MoveBitmapFont(movedFromAssetPaths[i], movedAssets[i]);
             }
         }
-
-        public static bool IsFnt(string path)
+        
+        public static bool CanImportFnt(string path)
         {
-            return path.EndsWith(".fnt", StringComparison.OrdinalIgnoreCase);
+            return path.EndsWith(".fnt", StringComparison.OrdinalIgnoreCase)
+                && !path.Contains("/StreamingAssets/");
         }
 
         public static void DoImportBitmapFont(string fntPatn)
         {
-            if (!IsFnt(fntPatn)) return;
+            if (!CanImportFnt(fntPatn)) return;
 
             TextAsset fnt = AssetDatabase.LoadMainAssetAtPath(fntPatn) as TextAsset;
             string text = fnt.text;
@@ -155,7 +156,7 @@ namespace litefeel
         
         private static void DelBitmapFont(string fntPath)
         {
-            if (!IsFnt(fntPath)) return;
+            if (!CanImportFnt(fntPath)) return;
 
             string fontPath = fntPath.Substring(0, fntPath.Length - 4) + ".fontsettings";
             AssetDatabase.DeleteAsset(fontPath);
@@ -163,7 +164,7 @@ namespace litefeel
 
         private static void MoveBitmapFont(string oldFntPath, string nowFntPath)
         {
-            if (!IsFnt(nowFntPath)) return;
+            if (!CanImportFnt(nowFntPath)) return;
 
             string oldFontPath = oldFntPath.Substring(0, oldFntPath.Length - 4) + ".fontsettings";
             string nowFontPath = nowFntPath.Substring(0, nowFntPath.Length - 4) + ".fontsettings";
