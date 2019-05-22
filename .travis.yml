@@ -1,23 +1,72 @@
-# origin Travis CI form https://github.com/JonathanPorta/ci-build
-
-language: objective-c
-osx_image: xcode7.3
-
+sudo: required
+language: bash
 env:
+  global:
+  - BUILD_NAME=ExampleProjectName
+  - TEST_PLATFORM=editmode
   matrix:
-    - UNITY_VERSION=beta
-    - UNITY_VERSION=2017
-    - UNITY_VERSION=2017.2
-    - UNITY_VERSION=2017.1
-    - UNITY_VERSION=5.6.5
+  - UNITY_VERSION=2018.4.0f1
+  - UNITY_VERSION=2018.3.11f1
+  - UNITY_VERSION=2018.2.21f1
+  - UNITY_VERSION=2019.1.3f1
 
-matrix:
-  allow_failures:
-    - env: UNITY_VERSION=beta
-
+services:
+- docker
 before_install:
-- chmod -R +x ./Scripts
-install:
-- travis_wait 50 ./Scripts/install.sh
+- git clone https://github.com/litefeel/UnityEmptyProject.git ../UnityEmptyProject
+- mkdir ../UnityEmptyProject/Packages/MyPackage
+- mv ./* ../UnityEmptyProject/Packages/MyPackage/
+- cd ../UnityEmptyProject
+
+- export IMAGE_NAME="gableroux/unity3d:$UNITY_VERSION"
+- export UNITY_PROJECT_DIR=$(pwd)/../UnityEmptyProject
+- export UNITY_LICENSE_CONTENT=`cat UnityLicense/Unity_v${UNITY_VERSION}.ulf`
+- docker pull $IMAGE_NAME
+
 script:
-- ./Scripts/build.sh
+- chmod -R +x ./ci/* && ./ci/docker_test.sh
+
+# jobs:
+#   include:
+#   - stage: test
+#     script: "chmod -R +x ./ci/* && ./ci/docker_test.sh"
+#     env: TEST_PLATFORM=editmode
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "$(pwd)/$TEST_PLATFORM-results.xml"
+#   - stage: test
+#     script: "chmod -R +x ./ci/* && ./ci/docker_test.sh"
+#     env: TEST_PLATFORM=playmode
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "$(pwd)/$TEST_PLATFORM-results.xml"
+#   - stage: build
+#     env: BUILD_TARGET=StandaloneLinux64
+#     script: "chmod -R +x ./ci/* && ./ci/docker_build.sh"
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "./Builds/"
+#   - stage: build
+#     env: BUILD_TARGET=StandaloneOSX
+#     script: "chmod -R +x ./ci/* && ./ci/docker_build.sh"
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "./Builds/"
+#   - stage: build
+#     env: BUILD_TARGET=StandaloneWindows64
+#     script: "chmod -R +x ./ci/* &&./ci/docker_build.sh"
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "./Builds/"
+#   - stage: build
+#     env: BUILD_TARGET=WebGL
+#     script: "chmod -R +x ./ci/* && ./ci/docker_build.sh"
+#     addons:
+#       artifacts:
+#         target_paths:
+#         - "./Builds/"
