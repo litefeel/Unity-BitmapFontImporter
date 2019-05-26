@@ -1,6 +1,6 @@
 # Bitmap Font Importer
 
-[![Build Status](https://travis-ci.org/litefeel/Unity-BitmapFontImporter.svg?branch=master)](https://travis-ci.org/litefeel/Unity-BitmapFontImporter)
+[![Build Status](https://travis-ci.com/litefeel/Unity-BitmapFontImporter.svg?branch=upm)](https://travis-ci.com/litefeel/Unity-BitmapFontImporter)
 [![Join the chat at https://gitter.im/litefeel/Unity-BitmapFontImporter](https://badges.gitter.im/litefeel/Unity-BitmapFontImporter.svg)](https://gitter.im/litefeel/Unity-BitmapFontImporter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![](https://img.shields.io/github/release/litefeel/Unity-BitmapFontImporter.svg?label=latest%20version)](https://github.com/litefeel/Unity-BitmapFontImporter/releases)
 [![](https://img.shields.io/github/license/litefeel/Unity-BitmapFontImporter.svg)](https://github.com/litefeel/Unity-BitmapFontImporter/blob/upm/LICENSE.md)
