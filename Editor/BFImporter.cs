@@ -113,7 +113,7 @@ namespace litefeel
                 }
 
                 TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
-                texImporter.textureType = TextureImporterType.GUI;
+                texImporter.textureType = TextureImporterType.Sprite;
                 texImporter.mipmapEnabled = false;
                 texImporter.SaveAndReimport();
                 textures[i] = texture;
