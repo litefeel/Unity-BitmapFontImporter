@@ -59,7 +59,8 @@ namespace litefeel
             if (material == null)
             {
                 material = new Material(Shader.Find("UI/Default"));
-                material.name = "Font Material";
+                material.name = fntName;
+
                 AssetDatabase.AddObjectToAsset(material, fontPath);
                 // unity 5.4+ cannot refresh it immediately, must import it
                 AssetDatabase.ImportAsset(fontPath);
