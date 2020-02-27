@@ -89,7 +89,9 @@ namespace litefeel
             
             AssetDatabase.SaveAssets();
 
-#if UNITY_5_5_OR_NEWER
+#if UNITY_2019_2_OR_NEWER
+            // No-op
+#elif UNITY_5_5_OR_NEWER
             // unity 5.5 can not load custom font
             ReloadFont(fontPath);
 #endif
