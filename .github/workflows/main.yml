@@ -1,0 +1,75 @@
+name: Test
+
+on:
+  pull_request: {}
+  push: {}
+
+# env:
+#   UNITY_LICENSE_PATH: UnityLicense/2019.2.11f1.ulf
+
+jobs:
+  Test:
+    name: Test ${{ matrix.unityVersion }} ${{ matrix.testMode }} 🔑
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion:
+          - 2019.3.3f1
+          - 2019.2.11f1
+          - 2018.4.17f1
+        testMode:
+          - playmode
+          - editmode
+    steps:
+      # Set env
+      - name: Set env UNITY_LICENSE_PATH
+        run: echo ::set-env name=UNITY_LICENSE_PATH::UnityLicense/${{ matrix.unityVersion }}.ulf
+
+      # Checkout Empty Project
+      - name: Checkout Empty Project
+        uses: actions/checkout@v2
+        with:
+          repository: litefeel/UnityEmptyProject
+
+      # Checkout this project
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+          path: Packages/MyPlugin
+
+      # Cache
+      - uses: actions/cache@v1.1.0
+        with:
+          path: Library
+          key: Library
+
+      # Test
+      - name: Run tests
+        uses: litefeel/unity-test-runner@v1.6
+        id: tests
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+
+      # # Build
+      # - name: Build project
+      #   uses: litefeel/unity-builder@v0.13
+      #   with:
+      #     unityVersion: ${{ matrix.unityVersion }}
+      #     targetPlatform: WebGL
+
+      # Output
+      - uses: actions/upload-artifact@v1
+        name: Upload tests
+        with:
+          name: Test results for ${{ matrix.testMode }} on unity ${{ matrix.unityVersion }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+
+      # - uses: actions/upload-artifact@v1
+      #   name: Upload build
+      #   with:
+      #     name: Build
+      #     path: build
