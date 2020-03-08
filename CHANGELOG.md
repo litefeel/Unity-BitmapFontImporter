@@ -1,7 +1,14 @@
+v3.1.0   Mar 8, 2020
+- [NEW]     Add settings for 'texture importer type by default`
+- [CHANGE]  The name of the material matches the font name
+- [CHANGE]  Disables ReloadFont hack on Unity 2018.4+
+- [CHANGE]  Update Samples
+- [FIX]     Incorrect import of multi-texture fonts in text format
+
 v3.0.0   May 3, 2019
 - [NEW]     Support Unity package manager
 - [CHANGE]  Move Examples to Samples~ directory
-- 
+
 v2.4    Oct 14, 2018
 - [FIX]     Fix Incorrect texture path
 - [FIX]     Fixed incorrect textue in FontMaterial when multi texure
