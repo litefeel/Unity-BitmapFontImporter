@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.IO;
 
-namespace litefeel
+namespace litefeel.BFImporter.Editor
 {
 
     public class BFMenuTool

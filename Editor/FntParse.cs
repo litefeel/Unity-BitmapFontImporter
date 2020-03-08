@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace litefeel
+namespace litefeel.BFImporter.Editor
 {
     public struct Kerning
     {

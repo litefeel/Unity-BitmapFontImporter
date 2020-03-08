@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace litefeel
+namespace litefeel.BFImporter.Editor
 {
     public class BFImporter : AssetPostprocessor
     {
