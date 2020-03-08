@@ -242,7 +242,8 @@ namespace litefeel.BFImporter.Editor
             string[] keys;
             string[] values;
             SplitParts(line, out keys, out values);
-            int id = 0, x = 0, y = 0, w = 0, h = 0, xo = 0, yo = 0, xadvance = 0;
+            int id = 0, x = 0, y = 0, w = 0, h = 0;
+            int xo = 0, yo = 0, xadvance = 0, page = 0;
             for (int i = keys.Length - 1; i >= 0; i--)
             {
                 switch (keys[i])
@@ -255,9 +256,10 @@ namespace litefeel.BFImporter.Editor
                     case "xoffset": xo = int.Parse(values[i]); break;
                     case "yoffset": yo = int.Parse(values[i]); break;
                     case "xadvance": xadvance = int.Parse(values[i]); break;
+                    case "page": page = int.Parse(values[i]); break;
                 }
             }
-            list.Add(CreateCharInfo(id, x, y, w, h, xo, yo, xadvance));
+            list.Add(CreateCharInfo(id, x, y, w, h, xo, yo, xadvance, page));
             return true;
         }
 
@@ -299,7 +301,7 @@ namespace litefeel.BFImporter.Editor
 
         #endregion
 
-        private CharacterInfo CreateCharInfo(int id, int x, int y, int w, int h, int xo, int yo, int xadvance, int page = 0)
+        private CharacterInfo CreateCharInfo(int id, int x, int y, int w, int h, int xo, int yo, int xadvance, int page)
         {
             Rect uv = new Rect();
             uv.x = (float)x / textureWidth + page;
