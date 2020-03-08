@@ -115,8 +115,17 @@ namespace litefeel.BFImporter.Editor
                 }
 
                 TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
-                texImporter.textureType = TextureImporterType.GUI;
+                texImporter.textureType = Settings.TextureImporterType;
                 texImporter.mipmapEnabled = false;
+                texImporter.wrapMode = TextureWrapMode.Clamp;
+                texImporter.alphaIsTransparency = true;
+                texImporter.alphaSource = TextureImporterAlphaSource.FromInput;
+
+                texImporter.streamingMipmaps = false;
+
+                // Sprite
+                texImporter.spriteImportMode = SpriteImportMode.Single;
+                
                 texImporter.SaveAndReimport();
                 textures[i] = texture;
             }
