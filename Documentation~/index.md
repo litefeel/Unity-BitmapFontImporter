@@ -1,7 +1,6 @@
 # Bitmap Font Importer
 
-[![Build Status](https://travis-ci.org/litefeel/Unity-BitmapFontImporter.svg?branch=master)](https://travis-ci.org/litefeel/Unity-BitmapFontImporter)
-[![Join the chat at https://gitter.im/litefeel/Unity-BitmapFontImporter](https://badges.gitter.im/litefeel/Unity-BitmapFontImporter.svg)](https://gitter.im/litefeel/Unity-BitmapFontImporter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Test](https://github.com/litefeel/Unity-BitmapFontImporter/workflows/Test/badge.svg)](https://github.com/litefeel/Unity-BitmapFontImporter/actions)
 [![](https://img.shields.io/github/release/litefeel/Unity-BitmapFontImporter.svg?label=latest%20version)](https://github.com/litefeel/Unity-BitmapFontImporter/releases)
 [![](https://img.shields.io/github/license/litefeel/Unity-BitmapFontImporter.svg)](https://github.com/litefeel/Unity-BitmapFontImporter/blob/upm/LICENSE.md)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/litefeel)
@@ -19,7 +18,7 @@ Thiks @Xylph, this origin code form [here](http://forum.unity3d.com/threads/unit
 - Support Multi texture
 - Reimport exists bitmap font
 - Source Code on [Github][bfi]
-- Tested with Unity 5.x - 2019
+- Tested with Unity 2018.4 and 2019
 - No runtime resources required
 - No scripting required
 
