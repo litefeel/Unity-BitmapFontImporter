@@ -3,12 +3,13 @@
 --- !u!128 &12800000
 Font:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: font1
   serializedVersion: 5
   m_LineSpacing: 80
-  m_DefaultMaterial: {fileID: 21222819308816826}
+  m_DefaultMaterial: {fileID: 21229661075200426}
   m_FontSize: 72
   m_Texture: {fileID: 0}
   m_AsciiStartOffset: 0
@@ -1230,13 +1231,15 @@ Font:
   m_FallbackFonts: []
   m_FontRenderingMode: 0
   m_UseLegacyBoundsCalculation: 0
---- !u!21 &21222819308816826
+  m_ShouldRoundAdvanceValue: 1
+--- !u!21 &21229661075200426
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Font Material
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: font1
   m_Shader: {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
