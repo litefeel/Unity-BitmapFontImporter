@@ -30,7 +30,6 @@ Thiks @Xylph, this origin code form [here](http://forum.unity3d.com/threads/unit
 Find the manifest.json file in the Packages folder of your project and edit it to look like this:
 ``` js
 {
-  {
   "scopedRegistries": [
     {
       "name": "My Registry",
