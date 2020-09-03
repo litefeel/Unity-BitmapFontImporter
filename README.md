@@ -25,13 +25,35 @@ Thiks @Xylph, this origin code form [here](http://forum.unity3d.com/threads/unit
 
 ## Install
 
-#### Using UnityPackageManager (for Unity 2018.3+)
+#### Using npm (Ease upgrade in Package Manager UI)**Recommend**
+
+Find the manifest.json file in the Packages folder of your project and edit it to look like this:
+``` js
+{
+  {
+  "scopedRegistries": [
+    {
+      "name": "My Registry",
+      "url": "https://registry.npmjs.org",
+      "scopes": [
+        "com.litefeel"
+      ]
+    }
+  ],
+  "dependencies": {
+    "com.litefeel.bitmapfontimporter": "3.1.0",
+    ...
+  }
+}
+```
+
+#### Using git
 
 Find the manifest.json file in the Packages folder of your project and edit it to look like this:
 ``` js
 {
   "dependencies": {
-    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#upm",
+    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#3.1.0",
     ...
   }
 }
