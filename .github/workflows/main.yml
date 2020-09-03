@@ -5,7 +5,7 @@ on:
   push: {}
 
 # env:
-#   UNITY_LICENSE_PATH: UnityLicense/2019.2.11f1.ulf
+#   UNITY_LICENSE_FILE: UnityLicense/2019.2.11f1.ulf
 
 jobs:
   Test:
@@ -18,13 +18,10 @@ jobs:
           - 2019.3.3f1
           - 2019.2.11f1
           - 2018.4.17f1
-        testMode:
-          - playmode
-          - editmode
     steps:
       # Set env
-      - name: Set env UNITY_LICENSE_PATH
-        run: echo ::set-env name=UNITY_LICENSE_PATH::UnityLicense/${{ matrix.unityVersion }}.ulf
+      - name: Set env UNITY_LICENSE_FILE
+        run: echo ::set-env name=UNITY_LICENSE_FILE::UnityLicense/${{ matrix.unityVersion }}.ulf
 
       # Checkout Empty Project
       - name: Checkout Empty Project
@@ -47,16 +44,14 @@ jobs:
 
       # Test
       - name: Run tests
-        uses: litefeel/unity-test-runner@v1.6
+        uses: webbertakken/unity-test-runner@v1.6
         id: tests
         with:
           unityVersion: ${{ matrix.unityVersion }}
-          testMode: ${{ matrix.testMode }}
-          artifactsPath: ${{ matrix.testMode }}-artifacts
 
       # # Build
       # - name: Build project
-      #   uses: litefeel/unity-builder@v0.13
+      #   uses: litefeel/unity-builder@v0.14
       #   with:
       #     unityVersion: ${{ matrix.unityVersion }}
       #     targetPlatform: WebGL
