@@ -21,7 +21,7 @@ jobs:
     steps:
       # Set env
       - name: Set env UNITY_LICENSE_FILE
-        run: echo ::set-env name=UNITY_LICENSE_FILE::UnityLicense/${{ matrix.unityVersion }}.ulf
+        run: echo "UNITY_LICENSE_FILE=UnityLicense/${{ matrix.unityVersion }}.ulf" >> $GITHUB_ENV
 
       # Checkout Empty Project
       - name: Checkout Empty Project
@@ -37,17 +37,17 @@ jobs:
           path: Packages/MyPlugin
 
       # Cache
-      - uses: actions/cache@v1.1.0
+      - uses: actions/cache@v2
         with:
           path: Library
           key: Library
 
       # Test
       - name: Run tests
-        uses: webbertakken/unity-test-runner@v1.6
+        uses: webbertakken/unity-test-runner@v1.7
         id: tests
         with:
-          customParameters: '-nographics'
+          customParameters: "-nographics"
           unityVersion: ${{ matrix.unityVersion }}
 
       # # Build
