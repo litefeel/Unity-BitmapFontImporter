@@ -116,12 +116,13 @@ namespace litefeel.BFImporter.Editor
         private Regex pattern;
         public void DoTextParse(ref string content)
         {
-            // letter=" "       // \S+=".+?"
-            // letter="x"       // \S+=".+?"
-            // letter="""       // \S+=".+?"
+            // letter=\" \"     // \S+=\\?".+?\\?"
+            // letter=" "       // \S+=\\?".+?\\?"
+            // letter="x"       // \S+=\\?".+?\\?"
+            // letter="""       // \S+=\\?".+?\\?"
             // letter=""        // \S+
             // char             // \S+
-            pattern = new Regex(@"\S+="".+?""|\S+");
+            pattern = new Regex(@"\S+=\\?"".+?\\?""|\S+");
             string[] lines = content.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             ReadTextInfo(ref lines[0]);
             ReadTextCommon(ref lines[1]);
