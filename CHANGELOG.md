@@ -1,3 +1,6 @@
+v3.2.0   Mar 12, 2021
+- [FIX]     Compatible with ShoeBox 3.6
+
 v3.1.0   Mar 8, 2020
 - [NEW]     Add settings for 'texture importer type by default`
 - [CHANGE]  The name of the material matches the font name

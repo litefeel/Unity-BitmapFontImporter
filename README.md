@@ -18,7 +18,7 @@ Thiks @Xylph, this origin code form [here](http://forum.unity3d.com/threads/unit
 - Support Multi texture
 - Reimport exists bitmap font
 - Source Code on [Github][bfi]
-- Tested with Unity 2018.4 and 2019
+- Tested with Unity 2019.4 and 2020.3
 - No runtime resources required
 - No scripting required
 
@@ -40,7 +40,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
     }
   ],
   "dependencies": {
-    "com.litefeel.bitmapfontimporter": "3.1.0",
+    "com.litefeel.bitmapfontimporter": "3.2.0",
     ...
   }
 }
@@ -52,7 +52,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 ``` js
 {
   "dependencies": {
-    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#3.1.0",
+    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#3.2.0",
     ...
   }
 }
