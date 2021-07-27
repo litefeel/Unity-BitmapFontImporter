@@ -2,9 +2,11 @@
   <info face="font1" size="72" bold="0" italic="0" charset="" unicode="" stretchH="100" smooth="1" aa="1" padding="2,2,2,2" spacing="0,0" outline="0"/>
   <common lineHeight="80" base="53" scaleW="337" scaleH="512" pages="1" packed="0"/>
   <pages>
+	<!-- this is pages -->
     <page id="0" file="font1.png"/>
   </pages>
   <chars count="62">
+	<!-- this is chars -->
     <char id="97" x="2" y="2" width="37" height="41" xoffset="3" yoffset="14" xadvance="40" page="0" chnl="15"/>
     <char id="98" x="2" y="45" width="35" height="55" xoffset="5" yoffset="1" xadvance="40" page="0" chnl="15"/>
     <char id="99" x="2" y="102" width="35" height="41" xoffset="3" yoffset="14" xadvance="36" page="0" chnl="15"/>
@@ -70,6 +72,7 @@
     <char id="32" x="0" y="0" width="0" height="0" xoffset="3" yoffset="1" xadvance="20" page="0" chnl="15"/>
   </chars>
   <kernings count="65">
+	<!-- this is kernings -->
     <kerning first="32" second="65" amount="-4"/>
     <kerning first="32" second="84" amount="-1"/>
     <kerning first="32" second="89" amount="-1"/>
