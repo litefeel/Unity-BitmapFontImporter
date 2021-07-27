@@ -1,3 +1,5 @@
+# https://github.com/game-ci/unity-actions
+
 name: Test
 
 on:
@@ -16,18 +18,22 @@ jobs:
       matrix:
         unityVersion:
           - 2019.4.20f1
-          - 2020.2.7f1
+          - 2020.3.0f1
+          - 2021.1.0f1
     steps:
-      # Set env
-      - name: Set env UNITY_LICENSE_FILE
-        run: echo "UNITY_LICENSE_FILE=UnityLicense/${{ matrix.unityVersion }}.ulf" >> $GITHUB_ENV
-
       # Checkout Empty Project
       - name: Checkout Empty Project
         uses: actions/checkout@v2
         with:
           repository: litefeel/UnityEmptyProject
 
+      # Set env
+      - name: Set env UNITY_LICENSE_FILE
+        run: |
+            echo 'UNITY_LICENSE<<EOF' >> $GITHUB_ENV
+            cat UnityLicense/${{ matrix.unityVersion }}.ulf >> $GITHUB_ENV
+            echo '' >> $GITHUB_ENV
+            echo 'EOF' >> $GITHUB_ENV
       # Checkout this project
       - name: Checkout repository
         uses: actions/checkout@v2
