@@ -40,7 +40,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
     }
   ],
   "dependencies": {
-    "com.litefeel.bitmapfontimporter": "3.2.0",
+    "com.litefeel.bitmapfontimporter": "3.3.0",
     ...
   }
 }
@@ -52,7 +52,7 @@ Find the manifest.json file in the Packages folder of your project and edit it t
 ``` js
 {
   "dependencies": {
-    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#3.2.0",
+    "com.litefeel.bitmapfontimporter": "https://github.com/litefeel/Unity-BitmapFontImporter.git#3.3.0",
     ...
   }
 }

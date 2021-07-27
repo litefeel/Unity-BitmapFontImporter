@@ -1,3 +1,6 @@
+v3.3.0   July 28, 2021
+- [FIX]     Fix error when xml file has comments
+
 v3.2.0   Mar 12, 2021
 - [FIX]     Compatible with ShoeBox 3.6
 
