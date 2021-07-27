@@ -48,11 +48,12 @@ namespace litefeel.BFImporter.Editor
         {
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(content);
+            XmlElement rootNode = xml.DocumentElement;
 
-            XmlNode info = xml.GetElementsByTagName("info")[0];
-            XmlNode common = xml.GetElementsByTagName("common")[0];
-            XmlNodeList pages = xml.GetElementsByTagName("pages")[0].ChildNodes;
-            XmlNodeList chars = xml.GetElementsByTagName("chars")[0].ChildNodes;
+            XmlNode info = rootNode.SelectSingleNode("info");
+            XmlNode common = rootNode.SelectSingleNode("common");
+            XmlNodeList pages = rootNode.SelectNodes("pages/page");
+            XmlNodeList chars = rootNode.SelectNodes("chars/char");
 
 
             fontName = info.Attributes.GetNamedItem("face").InnerText;
@@ -89,10 +90,9 @@ namespace litefeel.BFImporter.Editor
             }
 
             // kernings
-            XmlNode kerningsNode = xml.GetElementsByTagName("kernings")[0];
-            if (kerningsNode != null && kerningsNode.HasChildNodes)
+            XmlNodeList kerns = rootNode.SelectNodes("kernings/kerning");
+            if (kerns != null && kerns.Count > 0)
             {
-                XmlNodeList kerns = kerningsNode.ChildNodes;
                 kernings = new Kerning[kerns.Count];
                 for (int i = 0; i < kerns.Count; i++)
                 {
