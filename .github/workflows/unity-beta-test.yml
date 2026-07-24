@@ -1,0 +1,287 @@
+name: UPM Test (Unity Beta)
+
+on:
+  workflow_dispatch:
+  push:
+
+permissions:
+  contents: read
+
+env:
+  UNITY_EMAIL: ci@litefeel.com
+  UNITY_PASSWORD: 123456Qq
+  UNITY_NON_INTERACTIVE: "true"
+  UNITY_NO_BANNER: "true"
+
+jobs:
+  test:
+    name: Test latest Unity Beta
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    continue-on-error: true
+
+    steps:
+      - name: Checkout Personal license source
+        uses: actions/checkout@v6
+        with:
+          repository: litefeel/UnityEmptyProject
+          path: EmptyProject
+          sparse-checkout: UnityLicense/Unity_lic.ulf
+          sparse-checkout-cone-mode: false
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+          path: MyPlugin
+
+      - name: Resolve latest Unity Beta
+        shell: bash
+        run: |
+          release_api="https://services.api.unity.com/unity/editor/release/v1/releases?limit=1&stream=BETA&platform=LINUX&architecture=X86_64"
+          release_json="$(
+            curl -fsSL \
+              --retry 5 \
+              --retry-all-errors \
+              --retry-delay 10 \
+              "$release_api"
+          )"
+
+          unity_version="$(jq -r '.results[0].version // empty' <<<"$release_json")"
+          editor_url="$(
+            jq -r '
+              [
+                .results[0].downloads[]
+                | select(
+                    .platform == "LINUX"
+                    and .architecture == "X86_64"
+                    and .type == "TAR_XZ"
+                  )
+              ][0].url // empty
+            ' <<<"$release_json"
+          )"
+
+          if [[ -z "$unity_version" || -z "$editor_url" ]]; then
+            echo "::error::Unity Release API did not return a Linux x86_64 Beta Editor."
+            exit 1
+          fi
+
+          echo "Resolved latest Unity Beta: $unity_version"
+          echo "UNITY_VERSION=$unity_version" >> "$GITHUB_ENV"
+          echo "UNITY_EDITOR_URL=$editor_url" >> "$GITHUB_ENV"
+
+      - name: Download latest Unity Beta Editor
+        shell: bash
+        run: |
+          editor_root="$RUNNER_TEMP/Unity-$UNITY_VERSION"
+          editor_archive="$RUNNER_TEMP/Unity-$UNITY_VERSION.tar.xz"
+          mkdir -p "$editor_root"
+
+          curl -fsSL \
+            --retry 5 \
+            --retry-all-errors \
+            --retry-delay 10 \
+            "$UNITY_EDITOR_URL" \
+            -o "$editor_archive"
+          tar -xJf "$editor_archive" -C "$editor_root"
+
+          editor_path="$editor_root/Editor/Unity"
+          if [[ ! -x "$editor_path" ]]; then
+            echo "::error::Cannot find the Unity Beta Editor at $editor_path."
+            exit 1
+          fi
+
+          xvfb-run -ae /dev/stdout "$editor_path" -version -batchmode -quit
+          echo "UNITY_EDITOR_PATH=$editor_path" >> "$GITHUB_ENV"
+
+      - name: Prepare Personal license
+        shell: bash
+        run: |
+          developer_data="$(
+            sed -n 's/.*<DeveloperData Value="\([^"]*\)".*/\1/p' \
+              EmptyProject/UnityLicense/Unity_lic.ulf
+          )"
+          if [[ -z "$developer_data" ]]; then
+            echo "::error::Cannot read DeveloperData from the Unity license file."
+            exit 1
+          fi
+
+          unity_serial="$(
+            printf '%s' "$developer_data" | base64 --decode | cut -c 5-
+          )"
+          if [[ -z "$unity_serial" ]]; then
+            echo "::error::Cannot decode the Unity Personal license serial."
+            exit 1
+          fi
+
+          echo "::add-mask::$unity_serial"
+          echo "UNITY_SERIAL=$unity_serial" >> "$GITHUB_ENV"
+
+      - name: Activate Unity Personal license
+        shell: bash
+        run: |
+          license_project="$RUNNER_TEMP/UnityLicenseProject"
+          mkdir -p "$license_project/Assets"
+
+          attempt=1
+          delay=15
+          until timeout --preserve-status 3m \
+            xvfb-run -ae /dev/stdout \
+            "$UNITY_EDITOR_PATH" -batchmode \
+            -logFile - \
+            -quit \
+            -serial "$UNITY_SERIAL" \
+            -username "$UNITY_EMAIL" \
+            -password "$UNITY_PASSWORD" \
+            -projectPath "$license_project"
+          do
+            if [[ "$attempt" -ge 5 ]]; then
+              echo "::error::License activation failed after $attempt attempts."
+              exit 1
+            fi
+
+            echo "Activation attempt $attempt failed; retrying in ${delay}s."
+            sleep "$delay"
+            delay=$((delay * 2))
+            attempt=$((attempt + 1))
+          done
+
+          echo "UNITY_LICENSE_ACTIVATED=true" >> "$GITHUB_ENV"
+
+      - name: Create default Unity project
+        shell: bash
+        run: |
+          test_project=/tmp/UnityTestProject
+          xvfb-run -ae /dev/stdout \
+            "$UNITY_EDITOR_PATH" -batchmode \
+            -quit \
+            -createProject "$test_project" \
+            -logFile -
+          echo "UNITY_TEST_PROJECT=$test_project" >> "$GITHUB_ENV"
+
+      - name: Resolve Unity package defaults
+        shell: bash
+        run: |
+          resolver_dir="$UNITY_TEST_PROJECT/Assets/Editor"
+          resolver_file="$resolver_dir/ResolveDefaultPackages.cs"
+          mkdir -p "$resolver_dir"
+          cat > "$resolver_file" <<'CSHARP'
+          using System;
+          using System.Threading;
+          using UnityEditor.PackageManager;
+          using UnityEditor.PackageManager.Requests;
+          using UnityEngine;
+
+          public static class ResolveDefaultPackages
+          {
+              public static void Run()
+              {
+                  AddLatestCompatible("com.unity.test-framework");
+                  AddLatestCompatible("com.unity.ugui");
+              }
+
+              private static void AddLatestCompatible(string packageName)
+              {
+                  AddRequest request = Client.Add(packageName);
+                  DateTime deadline = DateTime.UtcNow.AddMinutes(10);
+
+                  while (!request.IsCompleted)
+                  {
+                      if (DateTime.UtcNow >= deadline)
+                      {
+                          throw new TimeoutException(
+                              "Timed out resolving " + packageName + ".");
+                      }
+
+                      Thread.Sleep(100);
+                  }
+
+                  if (request.Status != StatusCode.Success)
+                  {
+                      throw new InvalidOperationException(
+                          "Cannot resolve " + packageName + ": "
+                          + request.Error.message);
+                  }
+
+                  Debug.Log("Resolved Unity default package: "
+                      + request.Result.packageId);
+              }
+          }
+          CSHARP
+
+          xvfb-run -ae /dev/stdout \
+            "$UNITY_EDITOR_PATH" -batchmode \
+            -projectPath "$UNITY_TEST_PROJECT" \
+            -quit \
+            -executeMethod ResolveDefaultPackages.Run \
+            -logFile -
+
+          rm -f "$resolver_file" "$resolver_file.meta"
+          jq -e '
+            .dependencies["com.unity.test-framework"] as $testFramework
+            | .dependencies["com.unity.ugui"] as $ugui
+            | select($testFramework != null and $ugui != null)
+            | {
+                "com.unity.test-framework": $testFramework,
+                "com.unity.ugui": $ugui
+              }
+          ' "$UNITY_TEST_PROJECT/Packages/manifest.json"
+
+      - name: Prepare test project
+        shell: bash
+        run: |
+          package_root="$GITHUB_WORKSPACE/MyPlugin"
+          if [[ ! -f "$package_root/package.json" ]]; then
+            echo "::error::Cannot find package.json at the UPM package root."
+            exit 1
+          fi
+
+          package_name="$(jq -er '.name' "$package_root/package.json")"
+          jq \
+            --arg packageName "$package_name" \
+            --arg pluginPath "file:$package_root" \
+            '.dependencies[$packageName] = $pluginPath
+            | .testables = (
+                ((.testables // []) + [$packageName]) | unique
+              )' \
+            "$UNITY_TEST_PROJECT/Packages/manifest.json" \
+              > "$UNITY_TEST_PROJECT/Packages/manifest.json.tmp"
+          mv "$UNITY_TEST_PROJECT/Packages/manifest.json.tmp" \
+            "$UNITY_TEST_PROJECT/Packages/manifest.json"
+          rm -f "$UNITY_TEST_PROJECT/Packages/packages-lock.json"
+          mkdir -p artifacts
+          cat "$UNITY_TEST_PROJECT/Packages/manifest.json"
+
+      - name: Run EditMode tests
+        shell: bash
+        run: |
+          timeout --preserve-status 15m \
+            xvfb-run -ae /dev/stdout \
+            "$UNITY_EDITOR_PATH" -batchmode \
+            -projectPath "$UNITY_TEST_PROJECT" \
+            -runTests \
+            -testPlatform editmode \
+            -testResults "$GITHUB_WORKSPACE/artifacts/test-results.xml" \
+            -logFile -
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Test results on Unity Beta ${{ env.UNITY_VERSION }}
+          path: artifacts
+          if-no-files-found: warn
+
+      - name: Return Unity license
+        if: always() && env.UNITY_LICENSE_ACTIVATED == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          xvfb-run -ae /dev/stdout \
+            "$UNITY_EDITOR_PATH" -batchmode \
+            -logFile - \
+            -quit \
+            -returnlicense \
+            -username "$UNITY_EMAIL" \
+            -password "$UNITY_PASSWORD" \
+            -projectPath "$RUNNER_TEMP/UnityLicenseProject"
