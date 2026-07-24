@@ -12,19 +12,68 @@ env:
   UNITY_PASSWORD: 123456Qq
   UNITY_NON_INTERACTIVE: "true"
   UNITY_NO_BANNER: "true"
+  UNITY_VERSIONS_JSON: >-
+    ["2019.4.41f2", "2022.3.62f2", "6000.3.1f1", "6000.5.5f1"]
 
 jobs:
+  select-versions:
+    name: Select supported Unity versions
+    runs-on: ubuntu-latest
+    outputs:
+      unityVersions: ${{ steps.matrix.outputs.unityVersions }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          path: MyPlugin
+
+      - name: Filter versions by package minimum
+        id: matrix
+        shell: bash
+        run: |
+          manifest=MyPlugin/package.json
+          declared_unity="$(jq -r '.unity // "2019.4"' "$manifest")"
+          declared_release="$(jq -r '.unityRelease // empty' "$manifest")"
+
+          if [[ ! "$declared_unity" =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
+            echo "::error::Invalid package.json unity version: $declared_unity"
+            exit 1
+          fi
+
+          minimum="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[4]:-0}${declared_release}"
+          mapfile -t candidates < <(jq -r '.[]' <<<"$UNITY_VERSIONS_JSON")
+          supported=()
+
+          for version in "${candidates[@]}"; do
+            if [[ "$(printf '%s\n%s\n' "$minimum" "$version" | sort -V | head -n 1)" == "$minimum" ]]; then
+              supported+=("$version")
+            else
+              echo "Skipping Unity $version; package minimum is $minimum."
+            fi
+          done
+
+          if [[ "${#supported[@]}" -eq 0 ]]; then
+            echo "::error::No configured Unity version supports package minimum $minimum."
+            exit 1
+          fi
+
+          versions_json="$(
+            printf '%s\n' "${supported[@]}" |
+              jq -R . |
+              jq -sc .
+          )"
+          echo "Selected Unity versions: $versions_json"
+          echo "unityVersions=$versions_json" >> "$GITHUB_OUTPUT"
+
   test:
     name: Test Unity ${{ matrix.unityVersion }} in Docker
+    needs: select-versions
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        unityVersion:
-          - "2019.4.41f2"
-          - "2022.3.62f2"
-          - "6000.3.1f1"
-          - "6000.5.5f1"
+        unityVersion: ${{ fromJSON(needs.select-versions.outputs.unityVersions) }}
     container:
       image: unityci/editor:ubuntu-${{ matrix.unityVersion }}-base-3.2.2
     timeout-minutes: 30
